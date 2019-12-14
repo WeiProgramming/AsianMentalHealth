@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Card, CardActions, CardContent, Typography, TextField, Button} from '@material-ui/core';
+import {connect} from 'react-redux';
+import {updateNumber} from "../../Redux/Test/actions";
 
 import './SignUp.css';
 
@@ -20,8 +22,13 @@ class SignUp extends Component {
         console.log(this.state);
     }
 
+    onClick = (event) => {
+        this.props.dispatch(updateNumber());
+    }
+
     render() {
         const {username, email, password, confirmPassword} = this.state;
+        const {number} = this.props;
         let isInvalid = username === '' || email === '' || (password && confirmPassword) === '' || (password !== confirmPassword);
         console.log(isInvalid);
         return (
@@ -29,7 +36,7 @@ class SignUp extends Component {
                 <Card style={{padding: '3%', width: '40%'}}>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="h2">
-                            Sign Up
+                            Sign Up <p>{number}</p>
                         </Typography>
                         <hr/>
                         <form>
@@ -51,11 +58,20 @@ class SignUp extends Component {
                             </Button>
                         </form>
                     </CardContent>
-
+                    <Button variant="outlined" color="primary" onClick={this.onClick}>
+                        Test
+                    </Button>
                 </Card>
             </div>
         )
     }
 }
 
-export default SignUp;
+const mapStateToProps = (state) => {
+    console.log(state);
+    return {
+        number: state.number.number
+    }
+}
+
+export default connect(mapStateToProps)(SignUp);
