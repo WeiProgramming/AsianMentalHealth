@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Card, CardActions, CardContent, Typography, TextField, Button} from '@material-ui/core';
+import {Card, CardContent, Typography, TextField, Button} from '@material-ui/core';
 import {connect} from 'react-redux';
-import {updateNumber} from "../../Redux/Test/actions";
+import * as ROUTES from '../../Constants/routes';
+import {Link} from 'react-router-dom';
 
 import './SignUp.css';
 
@@ -22,15 +23,25 @@ class SignUp extends Component {
         console.log(this.state);
     }
 
-    onClick = (event) => {
-        this.props.dispatch(updateNumber());
+    onClick = () => {
+        this.props.fireBase.doSignUpUserWithEmailandPassword(this.state.email, this.state.password).then(authUser => {
+            console.log('authUser',authUser);
+            this.props.fireBase.user(authUser.user.uid)
+                .set({username: this.state.username, email: this.state.email})
+        }).then(() => {
+            this.props.history.push(ROUTES.HOME);
+        }).catch(error => {
+            // User already created
+            console.log('error',error);
+            this.props.history.push(ROUTES.SIGN_IN);
+        })
     }
 
     render() {
         const {username, email, password, confirmPassword} = this.state;
         const {number} = this.props;
         let isInvalid = username === '' || email === '' || (password && confirmPassword) === '' || (password !== confirmPassword);
-        console.log(isInvalid);
+        console.log('invalid form',isInvalid);
         return (
             <div className="signup-container">
                 <Card style={{padding: '3%', width: '40%'}}>
@@ -40,27 +51,27 @@ class SignUp extends Component {
                         </Typography>
                         <hr/>
                         <form>
-                        <Typography style={{marginBottom: '2%'}}>
+                        <Typography component={'div'} variant={'body2'} style={{marginBottom: '2%'}}>
                             <TextField onChange={this.onChange} name="username" label="username" variant="outlined" className="text-input"/>
                         </Typography>
-                        <Typography style={{marginBottom: '2%'}}>
+                        <Typography component={'div'} variant={'body2'} style={{marginBottom: '2%'}}>
                             <TextField onChange={this.onChange} label="email" name="email" variant="outlined" className="text-input"/>
                         </Typography>
-                        <Typography style={{marginBottom: '2%'}}>
+                        <Typography component={'div'} variant={'body2'} style={{marginBottom: '2%'}}>
                             <TextField onChange={this.onChange} label="password" name="password" variant="outlined" className="text-input"/>
                         </Typography>
-                        <Typography style={{marginBottom: '2%'}}>
+                        <Typography component={'div'} variant={'body2'} style={{marginBottom: '2%'}}>
                             <TextField onChange={this.onChange} label="confirm password" name="confirmPassword" variant="outlined" className="text-input"/>
                         </Typography>
-
-                            <Button variant="outlined" color="primary" disabled={isInvalid}>
+                            <Button variant="outlined" color="primary" disabled={isInvalid} onClick={this.onClick}>
                                 Sign up
                             </Button>
                         </form>
+                        <hr/>
+                        <Typography>
+                            <small>Already have an account? Click <Link to={ROUTES.SIGN_IN}>here</Link></small>
+                        </Typography>
                     </CardContent>
-                    <Button variant="outlined" color="primary" onClick={this.onClick}>
-                        Test
-                    </Button>
                 </Card>
             </div>
         )
@@ -70,7 +81,7 @@ class SignUp extends Component {
 const mapStateToProps = (state) => {
     console.log(state);
     return {
-        number: state.number.number
+        fireBase: state.fireBase.fireBase
     }
 }
 

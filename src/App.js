@@ -1,36 +1,65 @@
-import React from 'react';
+import React, {useEffect, Component} from 'react';
 import {
     BrowserRouter as Router,
     Switch,
     Route
 } from "react-router-dom";
-import LandingPage from './Components/Landing/Landing';
 import Navigation from './Components/Navigation/Navigation';
-import SignUp from './Components/SignUp/SignUp';
-import SignIn from './Components/SignIn/SignIn';
 import * as ROUTES from './Constants/routes';
 import {createStore} from 'redux';
 import {Provider} from 'react-redux';
 import rootReducer from './Redux/root-reducer';
-import Firebase from "./Constants/firebase";
-import {firebaseConfig} from "./configuration";
+import ShareLayout from "./Components/Share/layout/share-layout";
+import PublicLayout from './Components/Public/layout/public-layout';
+import {connect} from 'react-redux';
+import {checkAuthState} from "./Redux/Firebase/actions";
+import PrivateRoute from "./Components/Utils/PrivateRoute";
+import PublicRoute from "./Components/Utils/PublicRoute";
+
+const store = createStore(rootReducer);
+
+class BaseApp extends Component {
+    componentDidMount() {
+        console.log(this.props);
+        this.authFirebaseListener = this.props.fireBase.auth.onAuthStateChanged(authUser => {
+            this.props.dispatch(checkAuthState(authUser));
+            authUser ? console.log('signed in', authUser) : console.log('user not signed in');
+        })
+    }
+    componentWillUnmount() {
+        this.authFirebaseListener && this.authFirebaseListener();
+    }
+    render() {
+        const {isSignedIn} = this.props;
+        return (
+            <Router>
+                <div>
+                    <Navigation/>
+                    <Switch>
+                        <PrivateRoute isSignedIn={isSignedIn} path={ROUTES.SHARED} component={ShareLayout} />
+                        <PublicRoute isSignedIn={isSignedIn} component={PublicLayout}/>
+                    </Switch>
+                </div>
+            </Router>
+        )
+    }
+}
+
+const mapStateToProps = (state) => {
+    return {
+        fireBase: state.fireBase.fireBase,
+        isSignedIn: state.fireBase.isSignedIn
+    }
+}
+
+const ConnectApp = connect(mapStateToProps)(BaseApp)
 
 
 function App() {
-    const store = createStore(rootReducer);
 
   return (
       <Provider store={store}>
-      <Router>
-            <Navigation/>
-          <div>
-            <Switch>
-                <Route exact path={ROUTES.HOME} component={LandingPage}/>
-                <Route exact path={ROUTES.SIGN_UP} component={SignUp}/>
-                <Route exact path={ROUTES.SIGN_IN} component={SignIn}/>
-            </Switch>
-          </div>
-      </Router>
+        <ConnectApp/>
       </Provider>
   );
 }

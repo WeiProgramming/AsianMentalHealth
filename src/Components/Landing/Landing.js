@@ -1,13 +1,9 @@
 import React, {Component} from 'react';
 import './Landing.css';
 import {Button} from '@material-ui/core';
-import {withRouter} from 'react-router-dom';
 import * as ROUTES from '../../Constants/routes';
 
 class LandingPage extends Component {
-    constructor(props) {
-        super(props);
-    }
     handleOnClick = () => {
         this.props.history.push(ROUTES.SIGN_UP);
     }
@@ -25,4 +21,4 @@ class LandingPage extends Component {
     }
 }
 
-export default withRouter(LandingPage);
+export default LandingPage;

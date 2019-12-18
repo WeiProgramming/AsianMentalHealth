@@ -1,8 +1,8 @@
 import {combineReducers} from 'redux';
-import {numberReducer} from "./Test/reducers";
+import {firebaseReducer} from "./Firebase/reducer";
 
 const rootReducer = combineReducers({
-    number: numberReducer
+    fireBase: firebaseReducer
 });
 
 export default rootReducer;
