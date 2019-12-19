@@ -4,8 +4,15 @@ import {Link} from 'react-router-dom';
 import './Navigation.css';
 import {connect} from 'react-redux';
 import {updateNumberOfUsers} from "../../Redux/Public/actions";
+import {Menu, MenuItem} from '@material-ui/core';
 
 class Navigation extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            anchorEl: null
+        }
+    }
     componentDidMount() {
         console.log('navigation props',this.props);
         this.props.fireBase.users().on('value', snapshot => {
@@ -19,6 +26,12 @@ class Navigation extends Component {
         });
     }
 
+    handleClick = event => {
+        this.setState({anchorEl: event.currentTarget})
+    };
+    handleClose = () => {
+        this.setState({anchorEl: null})
+    };
     doLogout = () => {
         this.props.fireBase.doLogout();
     }
@@ -30,8 +43,8 @@ class Navigation extends Component {
                         <li>
                             <Link style={{textDecoration: 'none'}} to={ROUTES.HOME}>Home</Link>
                         </li>
-                        <li>
-                            <Link to={`${ROUTES.SHARED}/happiness`} style={{textDecoration: 'none'}}>Discussions</Link>
+                        <li aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
+                            <Link style={{textDecoration: 'none'}}>Discussions</Link>
                         </li>
                         <li>
                             <Link to={`${ROUTES.SHARED}${ROUTES.PROFILE}`} style={{textDecoration: 'none'}}>Profile</Link>
@@ -41,6 +54,20 @@ class Navigation extends Component {
                         </li>
                     </ul>
                 </nav>
+                <Menu
+                    id="simple-menu"
+                    anchorEl={this.state.anchorEl}
+                    keepMounted
+                    open={Boolean(this.state.anchorEl)}
+                    onClose={this.handleClose}
+                >
+                    <MenuItem onClick={this.handleClose}>
+                        <Link to={`${ROUTES.SHARED}/happiness`} style={{textDecoration: 'none'}}>Happiness</Link>
+                    </MenuItem>
+                    <MenuItem onClick={this.handleClose}>
+                        <Link to={`${ROUTES.SHARED}/troubles`} style={{textDecoration: 'none'}}>Troubles</Link>
+                    </MenuItem>
+                </Menu>
             </div>
         ) : (
             <div className="Navigation">
@@ -58,6 +85,8 @@ class Navigation extends Component {
         )
     }
 }
+
+
 
 const mapStateToProps = (state) => {
     return {

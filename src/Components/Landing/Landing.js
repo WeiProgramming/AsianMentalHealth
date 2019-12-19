@@ -18,6 +18,7 @@ class LandingPage extends Component {
                 <hr/>
                     <Button onClick={this.handleOnClick} variant="contained" color="primary">Join Us Smile and Thrive</Button>
                     <h4>There is currently {numUsers} users signed up!</h4>
+
                 </div>
             </div>
         )
