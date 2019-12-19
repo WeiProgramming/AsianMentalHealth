@@ -3,6 +3,7 @@ import * as ROUTES from "../../Constants/routes";
 import {Link} from 'react-router-dom';
 import './Navigation.css';
 import {connect} from 'react-redux';
+import {updateNumberOfUsers} from "../../Redux/Public/actions";
 
 class Navigation extends Component {
     componentDidMount() {
@@ -14,6 +15,7 @@ class Navigation extends Component {
                 ...usersObject[key], uid: key
             }));
             console.log('users', usersList);
+            this.props.dispatch(updateNumberOfUsers(usersList));
         });
     }
 

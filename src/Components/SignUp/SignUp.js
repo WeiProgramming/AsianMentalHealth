@@ -5,6 +5,7 @@ import * as ROUTES from '../../Constants/routes';
 import {Link} from 'react-router-dom';
 
 import './SignUp.css';
+import {updateNumberOfUsers} from "../../Redux/Public/actions";
 
 const INITIAL_STATE = {
     username: '',
@@ -18,6 +19,9 @@ class SignUp extends Component {
         super(props);
         this.state = {...INITIAL_STATE};
     }
+    componentDidMount() {
+
+    }
     onChange = (event) => {
         this.setState({[event.target.name]: event.target.value});
         console.log(this.state);
@@ -27,7 +31,17 @@ class SignUp extends Component {
         this.props.fireBase.doSignUpUserWithEmailandPassword(this.state.email, this.state.password).then(authUser => {
             console.log('authUser',authUser);
             this.props.fireBase.user(authUser.user.uid)
-                .set({username: this.state.username, email: this.state.email})
+                .set({username: this.state.username, email: this.state.email});
+            this.props.fireBase.users().on('value',users => {
+                const usersObject = users;
+                const usersList = Object.keys(usersObject).map(key => {
+                    return {
+                        ...usersObject[key],
+                        uid: key
+                    }
+                });
+                this.props.dispatch(updateNumberOfUsers(usersList));
+            })
         }).then(() => {
             this.props.history.push(ROUTES.HOME);
         }).catch(error => {
@@ -79,7 +93,6 @@ class SignUp extends Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
     return {
         fireBase: state.fireBase.fireBase
     }
