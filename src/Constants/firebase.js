@@ -16,6 +16,9 @@ class Firebase {
         console.log('logging user out');
         return this.auth.signOut();
     }
+    posts = (type) => {
+        return this.db.ref(`discussions/${type}`);
+    }
     user = uid => this.db.ref(`users/${uid}`);
     users = () => this.db.ref('users');
 }
