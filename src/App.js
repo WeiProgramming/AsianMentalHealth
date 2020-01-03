@@ -20,8 +20,8 @@ const store = createStore(rootReducer);
 
 class BaseApp extends Component {
     componentDidMount() {
-        console.log(this.props);
         this.authFirebaseListener = this.props.fireBase.auth.onAuthStateChanged(authUser => {
+            console.log('oasc', authUser);
             this.props.dispatch(checkAuthState(authUser));
             authUser ? console.log('signed in', authUser) : console.log('user not signed in');
         })
@@ -48,6 +48,7 @@ class BaseApp extends Component {
 const mapStateToProps = (state) => {
     return {
         fireBase: state.fireBase.fireBase,
+        authUser: state.fireBase.authUser,
         isSignedIn: state.fireBase.isSignedIn
     }
 }

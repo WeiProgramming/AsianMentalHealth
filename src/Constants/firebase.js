@@ -19,6 +19,9 @@ class Firebase {
     posts = (type) => {
         return this.db.ref(`discussions/${type}`);
     }
+    post = (postId, type) => {
+        return this.db.ref(`discussions/${type}/${postId}`);
+    }
     user = uid => this.db.ref(`users/${uid}`);
     users = () => this.db.ref('users');
 }

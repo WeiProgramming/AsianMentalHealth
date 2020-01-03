@@ -4,18 +4,20 @@ import {
     Route,
     useRouteMatch
 } from "react-router-dom";
-import {Happiness, Troubles} from "../pages/index";
+import './public-layout.css';
+import {Happiness, Troubles, Post} from "../pages/index";
 import Profile from "../../Profile/Profile";
 import * as ROUTES from "../../../Constants/routes";
 
 class ShareLayout extends Component  {
     render() {
         return (
-            <div style={{paddingTop: '60px', paddingLeft:'2%', paddingRight:'2%'}}>
+            <div className="shareLayout" style={{paddingTop: '60px', paddingLeft:'2%', paddingRight:'2%'}}>
                     <Switch>
-                        <Route component={Happiness} path={`${this.props.match.path}/happiness`}/>
-                        <Route component={Troubles} path={`${this.props.match.path}/troubles`}/>
-                        <Route path={`${this.props.match.path}${ROUTES.PROFILE}`} component={Profile} />
+                        <Route exact component={Happiness} path={`${this.props.match.path}/happiness`}/>
+                        <Route exact component={Troubles} path={`${this.props.match.path}/troubles`}/>
+                        <Route exact path={`${this.props.match.path}${ROUTES.PROFILE}`} component={Profile} />
+                        <Route exact path={`${this.props.match.path}/happiness/posts/:postId`} component={Post} />
                     </Switch>
             </div>
         )

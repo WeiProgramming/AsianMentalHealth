@@ -2,7 +2,7 @@ import {UPDATE_NUMBER_OF_SIGNED_UP_USERS, UPDATE_LATEST_POSTS} from "./actions";
 
 const INITIAL_STATE = {
     numUsers: 0,
-    posts: null
+    posts: []
 }
 
 export const publicReducer = (state = INITIAL_STATE, action) => {

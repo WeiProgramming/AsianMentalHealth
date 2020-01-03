@@ -1,32 +1,45 @@
 import React, {Component} from 'react';
-import {TextField, Button, Card, CardContent, Container, Grid} from '@material-ui/core';
+import {TextField, Button, Card, CardContent, CardActions, Container, Grid} from '@material-ui/core';
 import {connect} from 'react-redux';
 import {updateLatestPosts} from "../../../Redux/Public/actions";
+import * as ROUTES from '../../../Constants/routes';
+import {Link} from 'react-router-dom';
+import {Utils} from "../../Utils/Utils";
+
 
 const INITIAL_FORM = {
     subject: '',
     message: '',
+    username: ''
 }
 
 class Happiness extends Component {
     constructor(props) {
         super(props);
-        this.state = {...INITIAL_FORM};
+        this.state = {...INITIAL_FORM, notFound: false};
     }
     componentDidMount() {
         console.log('authuser', this.props.authUser);
-        this.props.fireBase.posts('happiness').on('value', posts => {
-            const postsObject = posts.val();
+        this.props.fireBase.user(this.props.authUser.uid).once('value').then( snapshot => {
+            this.setState({username: snapshot.val().username});
+        });
+        this.listner = this.props.fireBase.posts('happiness').on('value', posts => {
+            const postsObject = posts ? posts.val() : null;
             if(!postsObject) {
+                this.setState({notFound: true});
                 return;
             }
             const postsList = Object.keys(postsObject).map( key => {
                 return {
-                    ...postsObject[key]
+                    ...postsObject[key],
+                    key: key
                 }
             });
             this.props.dispatch(updateLatestPosts(postsList));
         });
+    }
+    componentWillUnmount() {
+        this.listner();
     }
     onPress = (event) => {
         this.setState({[event.target.id]: event.target.value});
@@ -36,13 +49,18 @@ class Happiness extends Component {
             {
                 subject: this.state.subject,
                 message: this.state.message,
+                username: this.state.username,
                 uid: this.props.authUser.uid
             }
         );
         event.preventDefault();
     }
+    navigateToPost = (key) => {
+        this.props.history.push(`${ROUTES.SHARED}/happiness/${key}`);
+    }
     render() {
         const {posts} = this.props;
+        const {notFound} = this.state;
         return (
             <div>
                 <form noValidate autoComplete="off">
@@ -52,24 +70,32 @@ class Happiness extends Component {
                     <div>
                         <TextField  onChange={this.onPress} style={{width: "100%"}} id="message" label="Message" multiline rows="4" variant="outlined"/>
                     </div>
-                    <button onClick={this.onClick}>Test</button>
+                    <Button onClick={this.onClick} variant="outlined" color="primary">Post</Button>
                 </form>
                 <Container>
                     <Grid container spacing={4}>
                         {
-                            posts ? posts.map(post => {
+                            (posts && !notFound) ? posts.map(post => {
                                 return (
-                                    <Grid item xs={3}>
+                                    <Grid item xs={3} key={post.key}>
                                         <Card>
                                             <CardContent>
                                                 <h3>{post.subject}</h3>
-                                                <p>{post.message}</p>
+                                                <p>{Utils.truncate(post.message)}</p>
+                                                <p>By: {post.username}</p>
                                             </CardContent>
+                                            <CardActions>
+                                                <Button variant="outlined" color="primary">
+                                                    <Link to={`${ROUTES.SHARED}/happiness/posts/${post.key}`} style={{textDecoration: 'none'}}>
+                                                        Read More
+                                                    </Link>
+                                                </Button>
+                                            </CardActions>
                                         </Card>
                                     </Grid>
                                 )
                             })
-                            : (<p>Loading...</p>)
+                            : <p>No Posts</p>
                         }
                     </Grid>
                 </Container>

@@ -4,6 +4,7 @@ import {Button, Card, Typography, CardContent, Grid, Paper, Container} from '@ma
 import * as ROUTES from '../../Constants/routes';
 import {connect} from 'react-redux';
 import {updateNumberOfUsers, updateLatestPosts} from "../../Redux/Public/actions";
+import {Utils} from "../Utils/Utils";
 
 class LandingPage extends Component {
     componentDidMount() {
@@ -71,10 +72,12 @@ class LandingPage extends Component {
                             {posts ? posts.map( post => {
                                 return (
                                     <Grid item sm={4}>
-                                        <Paper>
-                                            <h3>{post.subject}</h3>
-                                            <p>{post.message}</p>
-                                        </Paper>
+                                        <Card>
+                                            <CardContent>
+                                                <h3>{post.subject}</h3>
+                                                <p>{Utils.truncate(post.message)}</p>
+                                            </CardContent>
+                                        </Card>
                                     </Grid>
                                 )
                             }) : <p>loading...</p>}

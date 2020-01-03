@@ -10,12 +10,12 @@ class Navigation extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            anchorEl: null
+            anchorEl: null,
+            username: null
         }
     }
     componentDidMount() {
-        console.log('navigation props',this.props);
-        this.props.fireBase.users().on('value', snapshot => {
+        this.listener = this.props.fireBase.users().on('value', snapshot => {
             const usersObject = snapshot.val();
 
             const usersList = Object.keys(usersObject).map(key => ({
@@ -23,7 +23,16 @@ class Navigation extends Component {
             }));
             console.log('users', usersList);
             this.props.dispatch(updateNumberOfUsers(usersList));
+            // added this to make this work with a listener
+            if(this.props.authUser !== null) {
+                this.props.fireBase.user(this.props.authUser.uid).once('value').then(snapshot => {
+                    this.setState({username: snapshot.val().username})
+                })
+            }
         });
+    }
+    componentWillUnmount() {
+        this.listener();
     }
 
     handleClick = event => {
@@ -36,10 +45,12 @@ class Navigation extends Component {
         this.props.fireBase.doLogout();
     }
     render() {
+        const {username} = this.state;
         return this.props.isSignedIn ? (
             <div className="Navigation">
                 <nav>
                     <ul>
+                        <li>Hi {username}</li>
                         <li>
                             <Link style={{textDecoration: 'none'}} to={ROUTES.HOME}>Home</Link>
                         </li>
@@ -91,6 +102,7 @@ class Navigation extends Component {
 const mapStateToProps = (state) => {
     return {
         fireBase: state.fireBase.fireBase,
+        authUser: state.fireBase.authUser,
         isSignedIn: state.fireBase.isSignedIn
     }
 }
