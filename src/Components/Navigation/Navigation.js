@@ -50,12 +50,15 @@ class Navigation extends Component {
             <div className="Navigation">
                 <nav>
                     <ul>
-                        <li>Hi {username}</li>
+                        <li>Hi {username}! </li>
                         <li>
-                            <Link style={{textDecoration: 'none'}} to={ROUTES.HOME}>Home</Link>
+                            <Link style={{textDecoration: 'none'}} to={`${ROUTES.SHARED}/happiness`}>Home</Link>
                         </li>
-                        <li aria-controls="simple-menu" aria-haspopup="true" onClick={this.handleClick}>
-                            <Link style={{textDecoration: 'none'}}>Discussions</Link>
+                        <li>
+                            <Link to={`${ROUTES.SHARED}/happiness`} style={{textDecoration: 'none'}}>Happiness</Link>
+                        </li>
+                        <li>
+                            <Link to={`${ROUTES.SHARED}/troubles`} style={{textDecoration: 'none'}}>Troubles</Link>
                         </li>
                         <li>
                             <Link to={`${ROUTES.SHARED}${ROUTES.PROFILE}`} style={{textDecoration: 'none'}}>Profile</Link>
@@ -65,20 +68,6 @@ class Navigation extends Component {
                         </li>
                     </ul>
                 </nav>
-                <Menu
-                    id="simple-menu"
-                    anchorEl={this.state.anchorEl}
-                    keepMounted
-                    open={Boolean(this.state.anchorEl)}
-                    onClose={this.handleClose}
-                >
-                    <MenuItem onClick={this.handleClose}>
-                        <Link to={`${ROUTES.SHARED}/happiness`} style={{textDecoration: 'none'}}>Happiness</Link>
-                    </MenuItem>
-                    <MenuItem onClick={this.handleClose}>
-                        <Link to={`${ROUTES.SHARED}/troubles`} style={{textDecoration: 'none'}}>Troubles</Link>
-                    </MenuItem>
-                </Menu>
             </div>
         ) : (
             <div className="Navigation">

@@ -11,8 +11,8 @@ class Post extends Component {
         this.state = {...INITIAL_STATE};
     }
     componentDidMount() {
-        const {postId} = this.props.match.params;
-        this.props.fireBase.post(postId, 'happiness')
+        const {postId, postType} = this.props.match.params;
+        this.props.fireBase.post(postId, postType)
             .once('value')
             .then( snapshot => {
                 this.setState({message: snapshot.val()});

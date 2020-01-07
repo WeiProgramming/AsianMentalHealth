@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {TextField, Button, Card, CardContent, CardActions, Container, Grid} from '@material-ui/core';
+import {TextField, Button, Card, CardContent, CardActions, Container, Grid, Paper} from '@material-ui/core';
 import {connect} from 'react-redux';
 import {updateLatestPosts} from "../../../Redux/Public/actions";
 import * as ROUTES from '../../../Constants/routes';
@@ -63,42 +63,50 @@ class Happiness extends Component {
         const {notFound} = this.state;
         return (
             <div>
-                <form noValidate autoComplete="off">
-                    <div>
-                        <TextField onChange={this.onPress} style={{width: "100%"}} id="subject" label="Subject" variant="outlined"/>
-                    </div>
-                    <div>
-                        <TextField  onChange={this.onPress} style={{width: "100%"}} id="message" label="Message" multiline rows="4" variant="outlined"/>
-                    </div>
-                    <Button onClick={this.onClick} variant="outlined" color="primary">Post</Button>
-                </form>
-                <Container>
-                    <Grid container spacing={4}>
-                        {
-                            (posts && !notFound) ? posts.map(post => {
-                                return (
-                                    <Grid item xs={3} key={post.key}>
-                                        <Card>
-                                            <CardContent>
-                                                <h3>{post.subject}</h3>
-                                                <p>{Utils.truncate(post.message)}</p>
-                                                <p>By: {post.username}</p>
-                                            </CardContent>
-                                            <CardActions>
-                                                <Button variant="outlined" color="primary">
-                                                    <Link to={`${ROUTES.SHARED}/happiness/posts/${post.key}`} style={{textDecoration: 'none'}}>
-                                                        Read More
-                                                    </Link>
-                                                </Button>
-                                            </CardActions>
-                                        </Card>
-                                    </Grid>
-                                )
-                            })
-                            : <p>No Posts</p>
-                        }
+                <Grid container spacing={2}>
+                    <Grid item xs={9}>
+                        <Container>
+                            <Paper style={{height: '80vh', padding: '2%'}}>
+                                <Grid container spacing={4}>
+                                    {
+                                        (posts && !notFound) ? posts.map(post => {
+                                                return (
+                                                    <Grid item xs={3} key={post.key}>
+                                                        <Card>
+                                                            <CardContent>
+                                                                <h3>{post.subject}</h3>
+                                                                <p>{Utils.truncate(post.message)}</p>
+                                                                <p>By: {post.username}</p>
+                                                            </CardContent>
+                                                            <CardActions>
+                                                                <Button variant="outlined" color="primary">
+                                                                    <Link to={`${ROUTES.SHARED}/happiness/posts/${post.key}`} style={{textDecoration: 'none'}}>
+                                                                        Read More
+                                                                    </Link>
+                                                                </Button>
+                                                            </CardActions>
+                                                        </Card>
+                                                    </Grid>
+                                                )
+                                            })
+                                            : <p>No Posts</p>
+                                    }
+                                </Grid>
+                            </Paper>
+                        </Container>
                     </Grid>
-                </Container>
+                    <Grid item xs={3}>
+                        <form noValidate autoComplete="off">
+                            <div>
+                                <TextField onChange={this.onPress} style={{width: "100%"}} id="subject" label="Subject" variant="outlined"/>
+                            </div>
+                            <div>
+                                <TextField  onChange={this.onPress} style={{width: "100%"}} id="message" label="Message" multiline rows="4" variant="outlined"/>
+                            </div>
+                            <Button onClick={this.onClick} variant="outlined" color="primary">Post</Button>
+                        </form>
+                    </Grid>
+                </Grid>
             </div>
         )
     }

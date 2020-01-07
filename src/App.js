@@ -19,10 +19,13 @@ import PublicRoute from "./Components/Utils/PublicRoute";
 const store = createStore(rootReducer);
 
 class BaseApp extends Component {
+    constructor(props) {
+        super(props);
+    }
     componentDidMount() {
         this.authFirebaseListener = this.props.fireBase.auth.onAuthStateChanged(authUser => {
-            console.log('oasc', authUser);
             this.props.dispatch(checkAuthState(authUser));
+            this.setState({checked: authUser});
             authUser ? console.log('signed in', authUser) : console.log('user not signed in');
         })
     }
@@ -36,8 +39,9 @@ class BaseApp extends Component {
                 <div>
                     <Navigation/>
                     <Switch>
+                    {isSignedIn ? (
                         <PrivateRoute isSignedIn={isSignedIn} path={ROUTES.SHARED} component={ShareLayout} />
-                        <PublicRoute isSignedIn={isSignedIn} component={PublicLayout}/>
+                   ) : (<PublicRoute isSignedIn={isSignedIn} component={PublicLayout}/>)}
                     </Switch>
                 </div>
             </Router>
