@@ -14,26 +14,6 @@ class Navigation extends Component {
             username: null
         }
     }
-    componentDidMount() {
-        this.listener = this.props.fireBase.users().on('value', snapshot => {
-            const usersObject = snapshot.val();
-
-            const usersList = Object.keys(usersObject).map(key => ({
-                ...usersObject[key], uid: key
-            }));
-            console.log('users', usersList);
-            this.props.dispatch(updateNumberOfUsers(usersList));
-            // added this to make this work with a listener
-            if(this.props.authUser !== null) {
-                this.props.fireBase.user(this.props.authUser.uid).once('value').then(snapshot => {
-                    this.setState({username: snapshot.val().username})
-                })
-            }
-        });
-    }
-    componentWillUnmount() {
-        this.listener();
-    }
 
     handleClick = event => {
         this.setState({anchorEl: event.currentTarget})
@@ -45,12 +25,10 @@ class Navigation extends Component {
         this.props.fireBase.doLogout();
     }
     render() {
-        const {username} = this.state;
         return this.props.isSignedIn ? (
             <div className="Navigation">
                 <nav>
                     <ul>
-                        <li>Hi {username}! </li>
                         <li>
                             <Link style={{textDecoration: 'none'}} to={`${ROUTES.SHARED}/happiness`}>Home</Link>
                         </li>
@@ -72,14 +50,6 @@ class Navigation extends Component {
         ) : (
             <div className="Navigation">
                 <nav>
-                    <ul>
-                        <li>
-                            <Link style={{textDecoration: 'none'}} to={ROUTES.HOME}>Home</Link>
-                        </li>
-                        <li>
-                            <Link to={ROUTES.SIGN_IN} style={{textDecoration: 'none'}}>Sign In</Link>
-                        </li>
-                    </ul>
                 </nav>
             </div>
         )

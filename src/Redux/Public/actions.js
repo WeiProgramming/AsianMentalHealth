@@ -1,5 +1,6 @@
 export const UPDATE_NUMBER_OF_SIGNED_UP_USERS = 'UPDATE_NUMBER_OF_SIGNED_UP_USERS';
-export const UPDATE_LATEST_POSTS = 'UPDATE_LATEST_POSTS';
+export const UPDATE_LATEST_HAPPINESS_POSTS = 'UPDATE_LATEST_HAPPINESS_POSTS';
+export const UPDATE_LATEST_TROUBLES_POSTS = 'UPDATE_LATEST_TROUBLES_POSTS';
 
 
 const updateNumberOfUsers = (usersList) => {
@@ -9,11 +10,18 @@ const updateNumberOfUsers = (usersList) => {
     }
 }
 
-const updateLatestPosts = (postsList) => {
+const updateLatestHappinessPosts = (postsList) => {
     return {
-        type: UPDATE_LATEST_POSTS,
+        type: UPDATE_LATEST_HAPPINESS_POSTS,
         payload: postsList
     }
 }
 
-export {updateNumberOfUsers, updateLatestPosts};
+const updateLatestTroublesPosts = (postsList) => {
+    return {
+        type: UPDATE_LATEST_TROUBLES_POSTS,
+        payload: postsList
+    }
+}
+
+export {updateNumberOfUsers, updateLatestHappinessPosts, updateLatestTroublesPosts};

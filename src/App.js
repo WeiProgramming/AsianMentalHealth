@@ -15,6 +15,7 @@ import {connect} from 'react-redux';
 import {checkAuthState} from "./Redux/Firebase/actions";
 import PrivateRoute from "./Components/Utils/PrivateRoute";
 import PublicRoute from "./Components/Utils/PublicRoute";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const store = createStore(rootReducer);
 

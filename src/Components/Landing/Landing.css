@@ -1,19 +1,24 @@
 .landing {
      width: 100%;
     height: 100vh;
-     background-image: url("/minimal-background.jpeg");
+     background-image: url("../../assets/public/minimal-background.jpeg");
      background-position: center;
      background-size: cover;
-     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+     /*display: flex;*/
+    /*flex-direction: column;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
  }
 
 .landing-description {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 10%;
+}
+
+.landing-description > * {
+    margin-bottom: 1%;
 }
 
 .landing h1 {
@@ -21,14 +26,30 @@
     margin: 2% 0 1% 0;
 }
 
+.details-section {
+    padding-top: 100px;
+}
+
 .quote-card {
     position: absolute;
     bottom: -5%;
     width: 80%;
     height: 200px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 50%;
+    transform: translateX(-50%);
 }
 
 .latest-posts {
     height: 80vh;
     margin-top: 5%;
+    background-color: #F0F0F0;
+    padding-top: 5%;
+}
+
+.latest-post-container {
+    margin-bottom: 2%;
 }

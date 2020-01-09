@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {TextField, Button, Card, CardContent, CardActions, Container, Grid, Paper} from '@material-ui/core';
 import {connect} from 'react-redux';
-import {updateLatestPosts} from "../../../Redux/Public/actions";
+import {updateLatestTroublesPosts} from "../../../Redux/Public/actions";
 import * as ROUTES from '../../../Constants/routes';
 import {Link} from 'react-router-dom';
 import {Utils} from "../../Utils/Utils";
@@ -23,7 +23,7 @@ class Troubles extends Component {
         this.props.fireBase.user(this.props.authUser.uid).once('value').then( snapshot => {
             this.setState({username: snapshot.val().username});
         });
-        this.listner = this.props.fireBase.posts('troubles').on('value', posts => {
+        this.props.fireBase.posts('troubles').on('value', posts => {
             const postsObject = posts ? posts.val() : null;
             if(!postsObject) {
                 this.setState({notFound: true});
@@ -35,11 +35,8 @@ class Troubles extends Component {
                     key: key
                 }
             });
-            this.props.dispatch(updateLatestPosts(postsList));
+            this.props.dispatch(updateLatestTroublesPosts(postsList));
         });
-    }
-    componentWillUnmount() {
-        this.listner();
     }
     onPress = (event) => {
         this.setState({[event.target.id]: event.target.value});
@@ -59,17 +56,18 @@ class Troubles extends Component {
         this.props.history.push(`${ROUTES.SHARED}/troubles/${key}`);
     }
     render() {
-        const {posts} = this.props;
+        const {troublesPosts} = this.props;
         const {notFound} = this.state;
         return (
             <div>
                 <Grid container spacing={2}>
                     <Grid item xs={9}>
                         <Container>
+                            <h3>Troubles Board</h3>
                             <Paper style={{height: '80vh', padding: '2%'}}>
                                 <Grid container spacing={4}>
                                     {
-                                        (posts && !notFound) ? posts.map(post => {
+                                        (troublesPosts && !notFound) ? troublesPosts.map(post => {
                                                 return (
                                                     <Grid item xs={3} key={post.key}>
                                                         <Card>
@@ -96,6 +94,8 @@ class Troubles extends Component {
                         </Container>
                     </Grid>
                     <Grid item xs={3}>
+                        <h3>Feeling down?</h3>
+                        <small>Share it with us, we are here for you</small>
                         <form noValidate autoComplete="off">
                             <div>
                                 <TextField onChange={this.onPress} style={{width: "100%"}} id="subject" label="Subject" variant="outlined"/>
@@ -116,7 +116,7 @@ const mapStateToProps= (state) => {
     return {
         fireBase: state.fireBase.fireBase,
         authUser: state.fireBase.authUser,
-        posts: state.public.posts
+        troublesPosts: state.public.troublesPosts
     }
 }
 export default connect(mapStateToProps)(Troubles);

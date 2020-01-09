@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import './Landing.css';
+import {Link} from 'react-router-dom';
 import {Button, Card, Typography, CardContent, Grid, Paper, Container} from '@material-ui/core';
 import * as ROUTES from '../../Constants/routes';
 import {connect} from 'react-redux';
-import {updateNumberOfUsers, updateLatestPosts} from "../../Redux/Public/actions";
+import {updateNumberOfUsers, updateLatestHappinessPosts, updateLatestTroublesPosts} from "../../Redux/Public/actions";
 import {Utils} from "../Utils/Utils";
 
 class LandingPage extends Component {
@@ -31,69 +32,121 @@ class LandingPage extends Component {
             }
             const postsList = Object.keys(postsObject).map( key => {
                 return {
-                    ...postsObject[key]
+                    ...postsObject[key],
+                    happinessPostKey: key
                 }
             });
-            this.props.dispatch(updateLatestPosts(postsList));
+            this.props.dispatch(updateLatestHappinessPosts(postsList));
+        });
+        this.props.fireBase.posts('troubles').limitToLast(3).on('value', posts => {
+            const postsObject = posts.val();
+            if(!postsObject) {
+                return;
+            }
+            const postsList = Object.keys(postsObject).map( key => {
+                return {
+                    ...postsObject[key],
+                    troublesPostKey: key
+                }
+            });
+            this.props.dispatch(updateLatestTroublesPosts(postsList));
         });
     }
     componentWillUnmount() {
         this.listener();
     }
     handleOnClick = () => {
-        this.props.history.push(ROUTES.SIGN_UP);
+        this.props.history.push(ROUTES.SIGN_IN);
     }
     render() {
-        const {numUsers, posts} = this.props;
+        const {numUsers, happinessPosts, troublesPosts} = this.props;
         return (
             <div>
-            <div className="landing">
-                <div className="landing-description">
-                    <h1>Asian Mental Health</h1>
-                    <small>You're not alone, we all struggle but let's get through this together</small>
-                <hr/>
-                    <Button onClick={this.handleOnClick} variant="contained" color="primary">Join Us Smile and Thrive</Button>
-                    <h4>There is currently {numUsers} users signed up!</h4>
-
+                {/*Landing Section*/}
+                <div className="landing">
+                    <div className="landing-description">
+                        <h1>Mental Health</h1>
+                        <Button onClick={this.handleOnClick} variant="contained" color="primary">Sign In Smile and Thrive</Button>
+                        <small>Click <Link to={ROUTES.SIGN_UP}>here</Link> to register</small>
+                        <h4>There is currently {numUsers} users signed up!</h4>
+                    </div>
+                    <Card className="quote-card">
+                        <CardContent>
+                            <h2>There's no reason to be alone</h2>
+                            <p>There's beauty in the air with each and everyone of us,
+                                share your pain or happiness, take my hand let's experience this
+                                together
+                            </p>
+                            <small>You're not alone, we all struggle but let's get through this together</small>
+                        </CardContent>
+                    </Card>
                 </div>
-                <Card className="quote-card">
-                    <CardContent>
-                        <Typography color="textSecondary">
-                            "Character cannot be developed in ease and quiet. Only through experience of trial and suffering can the soul be strengthened, ambition inspired, and success achieved." — Helen Keller
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </div>
+                {/*About us*/}
+                <div className="details-section">
+                    <Container fixed>
+                        <Grid container spacing={2}>
+                            <Grid item sm={6}>Test</Grid>
+                            <Grid item sm={6}>
+                                <Card>
+                                    <CardContent>
+                                        <img className="img-fluid" src={require('../../assets/public/images/dogs.jpeg')}/>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item sm={6}>
+                                <Card>
+                                    <CardContent>
+                                        <img className="img-fluid" src={require('../../assets/public/images/man-stressed.jpeg')}/>
+                                    </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item sm={6}>Test</Grid>
+                        </Grid>
+                    </Container>
+                </div>
+                {/* Latest Posts*/}
                 <div className="latest-posts">
                     <Container fixed>
-                    <h3>Latest Posts</h3>
-                        <h5>Happiness</h5>
-                        <Grid container spacing={3}>
-                            {posts ? posts.map( post => {
-                                return (
-                                    <Grid item sm={4}>
-                                        <Card>
-                                            <CardContent>
-                                                <h3>{post.subject}</h3>
-                                                <p>{Utils.truncate(post.message)}</p>
-                                            </CardContent>
-                                        </Card>
-                                    </Grid>
-                                )
-                            }) : <p>loading...</p>}
-                        </Grid>
-                        <h5>Troubles</h5>
-                        <Grid container spacing={3}>
-                            <Grid item sm={4}>
-                                <Paper>sm=4</Paper>
+                        <div className="text-center">
+                            <h2>Latest Posts</h2>
+                            <small>Posted by members of this site</small>
+                        </div>
+                        <div className="latest-post-container">
+                            <h5>Happiness</h5>
+                            <Grid container spacing={3}>
+                                {happinessPosts ? happinessPosts.map( post => {
+                                    return (
+                                        <Grid item sm={4} key={post.happinessPostKey}>
+                                            <Card>
+                                                <CardContent>
+                                                    <h3>{post.subject}</h3>
+                                                    <p>{Utils.truncate(post.message)}</p>
+                                                    <small>Posted by: {post.username}</small>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                }) : <p>loading...</p>}
                             </Grid>
-                            <Grid item sm={4}>
-                                <Paper>sm=4</Paper>
+                        </div>
+                        <div className="latest-post-container">
+                            <h5>Troubles</h5>
+                            <Grid container spacing={3}>
+                                {troublesPosts ? troublesPosts.map( post => {
+                                    return (
+                                        <Grid item sm={4} key={post.troublesPostKey}>
+                                            <Card>
+                                                <CardContent>
+                                                    <h3>{post.subject}</h3>
+                                                    <p>{Utils.truncate(post.message)}</p>
+                                                    <small>Posted by: {post.username}</small>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    )
+                                }) : <p>Loading...</p>}
                             </Grid>
-                            <Grid item sm={4}>
-                                <Paper>sm=4</Paper>
-                            </Grid>
-                        </Grid>
+                        </div>
                     </Container>
                 </div>
             </div>
@@ -104,7 +157,8 @@ class LandingPage extends Component {
 const mapStateToProps = (state) => {
     return {
         numUsers: state.public.numUsers,
-        posts: state.public.posts,
+        happinessPosts: state.public.happinessPosts,
+        troublesPosts: state.public.troublesPosts,
         fireBase: state.fireBase.fireBase
     }
 }
